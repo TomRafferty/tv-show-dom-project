@@ -1,16 +1,18 @@
-//You can edit ALL of the code here
+const contentEl = document.getElementById("content");
 function setup() {
   //all episodes returns an array of
   //objects found in episodes.js
   const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+  makeCards(allEpisodes);
 }
 
-function makePageForEpisodes(episodeList) {
-  //don't need this right now (not sure if I will)
-  // const rootElem = document.getElementById("root");
-  // rootElem.textContent = `Got ${episodeList.length} episode(s)`;
+function removeElementTagsFromString(string, openingElementTag, closingElementTag){
+  //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
+  let newStr = string.replace(openingElementTag, "");
+  return newStr.replace(closingElementTag, "");
+}
 
+function makeCards(episodeList) {
   /*
   Pseudo:
   creating the cards for each episode.
@@ -28,6 +30,46 @@ function makePageForEpisodes(episodeList) {
     . create p element - blurb for episode
 
   */
+  //creating the cards
+  const cardContainer = document.createElement("section");
+  cardContainer.id = "card-container";
+  contentEl.appendChild(cardContainer);
+
+  episodeList.forEach(episode => {
+    //create card div
+    const cardDiv = document.createElement("div");
+    
+    //create heading
+    const headingEl = document.createElement("h2");
+    headingEl.innerHTML = `${episode.name}`;
+    headingEl.className = "card-heading";
+    cardDiv.appendChild(headingEl);
+    //create subheading (season number and episode code)
+    const subHeadingEl = document.createElement("h3");
+    subHeadingEl.innerHTML = `SO${episode.season}EP${episode.number}`;
+    subHeadingEl.className = "card-sub-heading";
+    cardDiv.appendChild(subHeadingEl);
+
+    //create image
+    const imageEl = document.createElement("img");
+    imageEl.src = episode.image.medium;
+    imageEl.className = "card-image";
+    cardDiv.appendChild(imageEl);
+
+    //create para
+    const paraEl = document.createElement("p");
+    paraEl.textContent = removeElementTagsFromString(episode.summary, "<p>", "</p>");
+    paraEl.className = "card-para";
+    cardDiv.appendChild(paraEl);
+
+
+    //append card
+    cardContainer.appendChild(cardDiv);
+  });
 }
 
+/*NOTE TO SELF: research why we are using this way and not just calling in the js
+|
+V
+*/
 window.onload = setup;
