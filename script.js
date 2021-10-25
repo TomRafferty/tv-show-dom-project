@@ -38,32 +38,38 @@ function makeCards(episodeList) {
   episodeList.forEach(episode => {
     //create card div
     const cardDiv = document.createElement("div");
-    
+    cardDiv.className = "card";
+
+    //create card elements div
+    const cardElementsDiv = document.createElement("div");
+    cardElementsDiv.className = "card-elements";
+
     //create heading
     const headingEl = document.createElement("h2");
     headingEl.innerHTML = `${episode.name}`;
     headingEl.className = "card-heading";
-    cardDiv.appendChild(headingEl);
+    cardElementsDiv.appendChild(headingEl);
     //create subheading (season number and episode code)
     const subHeadingEl = document.createElement("h3");
     subHeadingEl.innerHTML = `SO${episode.season}EP${episode.number}`;
     subHeadingEl.className = "card-sub-heading";
-    cardDiv.appendChild(subHeadingEl);
+    cardElementsDiv.appendChild(subHeadingEl);
 
     //create image
     const imageEl = document.createElement("img");
     imageEl.src = episode.image.medium;
     imageEl.className = "card-image";
-    cardDiv.appendChild(imageEl);
+    cardElementsDiv.appendChild(imageEl);
 
     //create para
     const paraEl = document.createElement("p");
     paraEl.textContent = removeElementTagsFromString(episode.summary, "<p>", "</p>");
     paraEl.className = "card-para";
-    cardDiv.appendChild(paraEl);
+    cardElementsDiv.appendChild(paraEl);
 
 
     //append card
+    cardDiv.appendChild(cardElementsDiv);
     cardContainer.appendChild(cardDiv);
   });
 }

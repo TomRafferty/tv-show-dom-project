@@ -1,0 +1,74 @@
+body {
+  /* this is completely pointless
+    but it's snow... for game of thrones :P */
+  background-color: snow;
+}
+/*=====================GLOBAL====================*/
+.card {
+  /* positioning */
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  margin: auto;
+
+  /* visuals */
+  background-color: darkslategray;
+  border: solid 0.5rem;
+  border-color: darkred;
+}
+.card-elements {
+  /* positioning */
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  margin: auto;
+
+  /* size */
+  max-width: 80%;
+  
+
+  /* visuals */
+  background-color: darkslategray;
+  font-size: medium;
+}
+
+/*=====================SMALL=====================*/
+@media (max-width: 290px) {
+  .card {
+    /* size */
+    flex-flow: column nowrap;
+    width: 30%;
+    max-height: 50rem;
+    margin: 0;
+  }
+  .card-elements {
+    margin: auto;
+    flex-flow: column nowrap;
+    font-size: 16px;
+  }
+  .card-heading, .card-sub-heading{
+    font-size: 18px;
+  }
+  .card-image {
+    visibility: hidden;
+  }
+}
+
+/*=====================MOBILE====================*/
+/* 
+        this does not cover the smaller
+        width phones like folding phones 
+*/
+.card {
+  /* positioning */
+  margin: 2em auto 2em auto;
+
+  /* size */
+  width: 80%;
+}
+.card-elements {
+  /* size */
+  width: 80%;
+}
+
+/*=====================DESKTOP===================*/
