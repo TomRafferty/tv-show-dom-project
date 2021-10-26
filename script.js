@@ -9,11 +9,7 @@ function setup() {
   makeCards(allEpisodes);
 }
 
-function removeElementTagsFromString(
-  string,
-  openingElementTag,
-  closingElementTag
-) {
+function removeElementTagsFromString(string, openingElementTag, closingElementTag) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
   let newStr = string.replace(openingElementTag, "");
   return newStr.replace(closingElementTag, "");
@@ -51,20 +47,20 @@ function makeCards(episodeList, searchTerm) {
     cardContainer.removeChild(card);
   }
 
+  //so as to not effect original list
   let episodeListCopy = episodeList;
+
+  //apply search filter
   if(searchTerm !== undefined){
     episodeListCopy.filter((episode) => {
-      const episodeSum = removeElementTagsFromString(
-        episode.summary,
-        "<p>",
-        "</p>"
-      );
-      if (episodeSum.includes(searchTerm) || episode.name.includes(searchTerm)) {
+      const episodeSum = removeElementTagsFromString(episode.summary, "<p>", "</p>");
+      if(episodeSum.includes(searchTerm) || episode.name.includes(searchTerm)){
+        console.log(`episode: ${episode.name}}`);
         return true;
       }
+      
     });
   }
-  
   
   //creating all the cards
   episodeListCopy.forEach((episode) => {
@@ -111,6 +107,5 @@ function makeCards(episodeList, searchTerm) {
 
 /*NOTE TO SELF: research why we are using this way and not just calling in the js
 |
-V
-*/
+V             */
 window.onload = setup;
