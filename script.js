@@ -23,42 +23,22 @@ function liveSearch(str) {
 const cardContainer = document.createElement("section");
 cardContainer.id = "card-container";
 contentEl.appendChild(cardContainer);
+
 function makeCards(episodeList, searchTerm) {
-  /*
-  Pseudo:
-  creating the cards for each episode.
-
-  - create a card container
-
-  - for each element in the array:
-
-    . create a div - the card/container
-
-    . create heading element - season+episode+title
-
-    . create img element - img from episode
-
-    . create p element - blurb for episode
-
-  */
-
-  //remove previous cards
-  for (let card of cardContainer.childNodes) {
-    cardContainer.removeChild(card);
-  }
+  
+  cardContainer.innerHTML = "";
 
   //so as to not effect original list
   let episodeListCopy = episodeList;
 
   //apply search filter
   if(searchTerm !== undefined){
-    episodeListCopy.filter((episode) => {
+    episodeListCopy = episodeListCopy.filter((episode) => {
       const episodeSum = removeElementTagsFromString(episode.summary, "<p>", "</p>");
       if(episodeSum.includes(searchTerm) || episode.name.includes(searchTerm)){
         console.log(`episode: ${episode.name}}`);
         return true;
       }
-      
     });
   }
   
