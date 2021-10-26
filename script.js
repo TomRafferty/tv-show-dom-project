@@ -35,8 +35,7 @@ function makeCards(episodeList, searchTerm) {
   if(searchTerm !== undefined){
     episodeListCopy = episodeListCopy.filter((episode) => {
       const episodeSum = removeElementTagsFromString(episode.summary, "<p>", "</p>");
-      if(episodeSum.includes(searchTerm) || episode.name.includes(searchTerm)){
-        console.log(`episode: ${episode.name}}`);
+      if(episodeSum.toLowerCase().includes(searchTerm.toLowerCase()) || episode.name.toLowerCase().includes(searchTerm.toLowerCase())){
         return true;
       }
     });
