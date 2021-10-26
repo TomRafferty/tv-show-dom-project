@@ -1,18 +1,33 @@
+//globals:
+const allEpisodes = getAllEpisodes();
 const contentEl = document.getElementById("content");
+
 function setup() {
   //all episodes returns an array of
   //objects found in episodes.js
-  const allEpisodes = getAllEpisodes();
+  // eslint-disable-next-line no-undef
   makeCards(allEpisodes);
 }
 
-function removeElementTagsFromString(string, openingElementTag, closingElementTag){
+function removeElementTagsFromString(
+  string,
+  openingElementTag,
+  closingElementTag
+) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
   let newStr = string.replace(openingElementTag, "");
   return newStr.replace(closingElementTag, "");
 }
 
-function makeCards(episodeList) {
+function liveSearch(str) {
+  makeCards(allEpisodes, str);
+}
+
+//card container section
+const cardContainer = document.createElement("section");
+cardContainer.id = "card-container";
+contentEl.appendChild(cardContainer);
+function makeCards(episodeList, searchTerm) {
   /*
   Pseudo:
   creating the cards for each episode.
@@ -30,12 +45,29 @@ function makeCards(episodeList) {
     . create p element - blurb for episode
 
   */
-  //creating the cards
-  const cardContainer = document.createElement("section");
-  cardContainer.id = "card-container";
-  contentEl.appendChild(cardContainer);
 
-  episodeList.forEach(episode => {
+  //remove previous cards
+  for (let card of cardContainer.childNodes) {
+    cardContainer.removeChild(card);
+  }
+
+  let episodeListCopy = episodeList;
+  if(searchTerm !== undefined){
+    episodeListCopy.filter((episode) => {
+      const episodeSum = removeElementTagsFromString(
+        episode.summary,
+        "<p>",
+        "</p>"
+      );
+      if (episodeSum.includes(searchTerm) || episode.name.includes(searchTerm)) {
+        return true;
+      }
+    });
+  }
+  
+  
+  //creating all the cards
+  episodeListCopy.forEach((episode) => {
     //create card div
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
@@ -63,10 +95,13 @@ function makeCards(episodeList) {
 
     //create para
     const paraEl = document.createElement("p");
-    paraEl.textContent = removeElementTagsFromString(episode.summary, "<p>", "</p>");
+    paraEl.textContent = removeElementTagsFromString(
+      episode.summary,
+      "<p>",
+      "</p>"
+    );
     paraEl.className = "card-para";
     cardElementsDiv.appendChild(paraEl);
-
 
     //append card
     cardDiv.appendChild(cardElementsDiv);
