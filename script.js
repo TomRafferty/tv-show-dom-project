@@ -41,7 +41,7 @@ function makeCards(episodeList, searchTerm) {
       }
     });
     //add search count
-    resultCount.innerHTML = `Results: ${episodeListCopy.length}`;
+    resultCount.innerHTML = `Results: ${episodeListCopy.length}/${episodeList.length}`;
     if (searchTerm.length === 0) {
       resultCount.innerHTML = "";
     }
