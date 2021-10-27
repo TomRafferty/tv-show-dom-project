@@ -46,6 +46,11 @@ h1, h2, h3{
   max-width: 200px;
   margin: auto;
 }
+
+#search-container{
+  display: flex;
+  flex-flow: row wrap;
+}
 /*=====================VERY SMALL================*/
 @media (max-width: 320px) {
   body{

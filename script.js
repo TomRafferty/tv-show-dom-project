@@ -1,6 +1,7 @@
 //globals:
 const allEpisodes = getAllEpisodes();
 const contentEl = document.getElementById("content");
+const selectEl = document.getElementById("select-episode");
 
 function setup() {
   //all episodes returns an array of
@@ -17,6 +18,26 @@ function removeElementTagsFromString(string, openingElementTag, closingElementTa
 
 function liveSearch(str) {
   makeCards(allEpisodes, str);
+}
+
+function populateSelectEpisodes(){
+  //adds all the episodes to the select-episode <select> as options.
+  for(let i = 0; i < allEpisodes.length; i++){
+    const newEpisode = document.createElement("option");
+    //the values must = names of episodes to be filtered as a search term
+    newEpisode.value = allEpisodes[i].name;
+    newEpisode.text = `SO${allEpisodes[i].season}EP${allEpisodes[i].number}`;
+    selectEl.appendChild(newEpisode);
+  }
+}
+populateSelectEpisodes();
+function jumpToEpisode(episode){
+  //this function simply jumps to the selected episode
+  //clear the search
+  liveSearch("");
+  //jump to current selected option
+  const selectedEpisode = document.getElementById(episode);
+  selectedEpisode.scrollIntoView();
 }
 
 //card container section
@@ -52,6 +73,7 @@ function makeCards(episodeList, searchTerm) {
     //create card div
     const cardDiv = document.createElement("div");
     cardDiv.className = "card";
+    cardDiv.id = `${episode.name}`; //this is for the select scroll to
 
     //create card elements div
     const cardElementsDiv = document.createElement("div");

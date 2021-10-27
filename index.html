@@ -9,8 +9,14 @@
   </head>
 
   <body>
-    <input type="text" onkeyup="liveSearch(this.value)" placeholder="Search">
-    <p id="result-count"></p>
+    <div id="search-container">
+      <input type="text" onkeyup="liveSearch(this.value)" placeholder="Search">
+      <select name="select-episode" id="select-episode" onchange="jumpToEpisode(this.value)">
+        <option value="" selected>Select Episode</option>
+      </select>
+      <p id="result-count"></p>
+    </div>
+
     <div id="content">
       <!-- in here will go the card container -->
     </div>
