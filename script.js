@@ -12,8 +12,8 @@ function setup() {
 
 function removeElementTagsFromString(string, openingElementTag, closingElementTag) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
-  let newStr = string.replace(openingElementTag, "");
-  return newStr.replace(closingElementTag, "");
+  let newStr = string.replaceAll(openingElementTag, "");
+  return newStr.replaceAll(closingElementTag, "");
 }
 
 function liveSearch(str) {
