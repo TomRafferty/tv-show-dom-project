@@ -32,6 +32,7 @@ function makeCards(episodeList, searchTerm) {
   let episodeListCopy = episodeList;
 
   //apply search filter
+  const resultCount = document.getElementById("result-count");
   if(searchTerm !== undefined){
     episodeListCopy = episodeListCopy.filter((episode) => {
       const episodeSum = removeElementTagsFromString(episode.summary, "<p>", "</p>");
@@ -39,6 +40,11 @@ function makeCards(episodeList, searchTerm) {
         return true;
       }
     });
+    //add search count
+    resultCount.innerHTML = `Results: ${episodeListCopy.length}`;
+    if (searchTerm.length === 0) {
+      resultCount.innerHTML = "";
+    }
   }
   
   //creating all the cards
