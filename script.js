@@ -1,5 +1,17 @@
 //globals:
-const allEpisodes = getAllEpisodes();
+// const allEpisodes = getAllEpisodes();
+//switching to live data
+let allEpisodes = (fetch("https://api.tvmaze.com/shows/82/episodes")
+.then(function (response){
+  return response.json();
+})
+.then(function (data){
+  allEpisodes = data;
+  setup();
+})
+.catch(function (error){
+  console.log(`ERROR - ${error}`);
+}));
 const contentEl = document.getElementById("content");
 const selectEl = document.getElementById("select-episode");
 
@@ -115,4 +127,4 @@ function makeCards(episodeList, searchTerm) {
 /*NOTE TO SELF: research why we are using this way and not just calling in the js
 |
 V             */
-window.onload = setup;
+// window.onload = setup;
