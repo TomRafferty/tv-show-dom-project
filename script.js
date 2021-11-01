@@ -20,6 +20,8 @@ function setup() {
   //objects found in episodes.js
   // eslint-disable-next-line no-undef
   makeCards(allEpisodes);
+  populateSelectEpisodes();
+
 }
 
 function removeElementTagsFromString(string, openingElementTag, closingElementTag) {
@@ -38,11 +40,16 @@ function populateSelectEpisodes(){
     const newEpisode = document.createElement("option");
     //the values must = names of episodes to be filtered as a search term
     newEpisode.value = allEpisodes[i].name;
+    //if season >= 10
+    //if season < 10
+    //if season and episode >= 10
+    //if season and episode < 10
+    //if episode >= 10
+    //if episode < 10
     newEpisode.text = `SO${allEpisodes[i].season}EP${allEpisodes[i].number}`;
     selectEl.appendChild(newEpisode);
   }
 }
-populateSelectEpisodes();
 function jumpToEpisode(episode){
   //this function simply jumps to the selected episode
   //clear the search
