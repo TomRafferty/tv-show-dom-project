@@ -12,6 +12,7 @@ let allEpisodes = (fetch("https://api.tvmaze.com/shows/82/episodes")
 .catch(function (error){
   console.log(`ERROR - ${error}`);
 }));
+
 const contentEl = document.getElementById("content");
 const selectEl = document.getElementById("select-episode");
 
@@ -34,19 +35,23 @@ function liveSearch(str) {
   makeCards(allEpisodes, str);
 }
 
+function numberFormatter(number){
+  //this is formats episode and season numbers to use
+  //minimum 2 digit format
+  if(number >= 10){
+    return `${number}`;
+  }else{
+    return `0${number}`;
+  }
+}
+
 function populateSelectEpisodes(){
   //adds all the episodes to the select-episode <select> as options.
   for(let i = 0; i < allEpisodes.length; i++){
     const newEpisode = document.createElement("option");
     //the values must = names of episodes to be filtered as a search term
     newEpisode.value = allEpisodes[i].name;
-    //if season >= 10
-    //if season < 10
-    //if season and episode >= 10
-    //if season and episode < 10
-    //if episode >= 10
-    //if episode < 10
-    newEpisode.text = `SO${allEpisodes[i].season}EP${allEpisodes[i].number}`;
+    newEpisode.text = `SE${numberFormatter(allEpisodes[i].season)}EP${numberFormatter(allEpisodes[i].number)}`;
     selectEl.appendChild(newEpisode);
   }
 }
@@ -105,7 +110,7 @@ function makeCards(episodeList, searchTerm) {
     cardElementsDiv.appendChild(headingEl);
     //create subheading (season number and episode code)
     const subHeadingEl = document.createElement("h3");
-    subHeadingEl.innerHTML = `SO${episode.season}EP${episode.number}`;
+    subHeadingEl.innerHTML = `SE-${numberFormatter(episode.season)} EP-${numberFormatter(episode.number)}`;
     subHeadingEl.className = "card-sub-heading";
     cardElementsDiv.appendChild(subHeadingEl);
 
