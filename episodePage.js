@@ -12,36 +12,8 @@ let allEpisodes = fetch("https://api.tvmaze.com/shows/82/episodes")
     console.log(`ERROR - ${error}`);
   });
 
-//add search container
-const searchContainer = document.createElement("div");
-searchContainer.setAttribute.id = "search-container";
-document.body.appendChild(searchContainer);
-
-//add input
-const inputEl = document.createElement("input");
-inputEl.setAttribute.type = "text";
-inputEl.setAttribute.onkeyup = "liveSearch(this.value)";
-inputEl.setAttribute.placeholder = "Search";
-searchContainer.appendChild(inputEl);
-
-//add select
-const selectEl = document.createElement("select");
-selectEl.setAttribute.name = "select-episode";
-selectEl.setAttribute.id = "select-episode";
-selectEl.setAttribute.onchange = "jumpToEpisode(this.value)";
-searchContainer.appendChild(selectEl);
-
-//add initial option to select
-const optionEl = document.createElement("option");
-optionEl.setAttribute.value = "";
-optionEl.setAttribute.selected = true;
-optionEl.setAttribute.innerHTML = "Select Episode";
-selectEl.appendChild(optionEl);
-
-//add content div
-const contentEl = document.createElement("div");
-contentEl.setAttribute.id = "content";
-document.body.appendChild(contentEl);
+const contentEl = document.getElementById("content");
+const selectEl = document.getElementById("select-episode");
 
 function setup() {
   //all episodes returns an array of
@@ -97,9 +69,8 @@ function jumpToEpisode(episode) {
 
 //card container section
 const cardContainer = document.createElement("section");
-cardContainer.id = "card-container";
+cardContainer.setAttribute.id = "card-container";
 contentEl.appendChild(cardContainer);
-
 function makeCards(episodeList, searchTerm) {
   cardContainer.innerHTML = "";
 
