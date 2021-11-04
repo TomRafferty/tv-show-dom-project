@@ -1,17 +1,16 @@
 //globals:
-// const allEpisodes = getAllEpisodes();
-//switching to live data
-let allEpisodes = (fetch("https://api.tvmaze.com/shows/82/episodes")
-.then(function (response){
-  return response.json();
-})
-.then(function (data){
-  allEpisodes = data;
-  setup();
-})
-.catch(function (error){
-  console.log(`ERROR - ${error}`);
-}));
+//fetch data
+let allShows = fetch("https://api.tvmaze.com/shows/82/episodes")
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (data) {
+    allEpisodes = data;
+    setup();
+  })
+  .catch(function (error) {
+    console.log(`ERROR - ${error}`);
+  });
 
 const contentEl = document.getElementById("content");
 const selectEl = document.getElementById("select-episode");
@@ -22,10 +21,12 @@ function setup() {
   // eslint-disable-next-line no-undef
   makeCards(allEpisodes);
   populateSelectEpisodes();
-
 }
-
-function removeElementTagsFromString(string, openingElementTag, closingElementTag) {
+function removeElementTagsFromString(
+  string,
+  openingElementTag,
+  closingElementTag
+) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
   let newStr = string.replaceAll(openingElementTag, "");
   return newStr.replaceAll(closingElementTag, "");
@@ -35,27 +36,29 @@ function liveSearch(str) {
   makeCards(allEpisodes, str);
 }
 
-function numberFormatter(number){
+function numberFormatter(number) {
   //this is formats episode and season numbers to use
   //minimum 2 digit format
-  if(number >= 10){
+  if (number >= 10) {
     return `${number}`;
-  }else{
+  } else {
     return `0${number}`;
   }
 }
 
-function populateSelectEpisodes(){
+function populateSelectEpisodes() {
   //adds all the episodes to the select-episode <select> as options.
-  for(let i = 0; i < allEpisodes.length; i++){
+  for (let i = 0; i < allEpisodes.length; i++) {
     const newEpisode = document.createElement("option");
     //the values must = names of episodes to be filtered as a search term
     newEpisode.value = allEpisodes[i].name;
-    newEpisode.text = `SE${numberFormatter(allEpisodes[i].season)}EP${numberFormatter(allEpisodes[i].number)}`;
+    newEpisode.text = `SE${numberFormatter(
+      allEpisodes[i].season
+    )}EP${numberFormatter(allEpisodes[i].number)}`;
     selectEl.appendChild(newEpisode);
   }
 }
-function jumpToEpisode(episode){
+function jumpToEpisode(episode) {
   //this function simply jumps to the selected episode
   //clear the search
   liveSearch("");
@@ -70,7 +73,6 @@ cardContainer.id = "card-container";
 contentEl.appendChild(cardContainer);
 
 function makeCards(episodeList, searchTerm) {
-  
   cardContainer.innerHTML = "";
 
   //so as to not effect original list
@@ -78,10 +80,17 @@ function makeCards(episodeList, searchTerm) {
 
   //apply search filter
   const resultCount = document.getElementById("result-count");
-  if(searchTerm !== undefined){
+  if (searchTerm !== undefined) {
     episodeListCopy = episodeListCopy.filter((episode) => {
-      const episodeSum = removeElementTagsFromString(episode.summary, "<p>", "</p>");
-      if(episodeSum.toLowerCase().includes(searchTerm.toLowerCase()) || episode.name.toLowerCase().includes(searchTerm.toLowerCase())){
+      const episodeSum = removeElementTagsFromString(
+        episode.summary,
+        "<p>",
+        "</p>"
+      );
+      if (
+        episodeSum.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        episode.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
         return true;
       }
     });
@@ -91,7 +100,7 @@ function makeCards(episodeList, searchTerm) {
       resultCount.innerHTML = "";
     }
   }
-  
+
   //creating all the cards
   episodeListCopy.forEach((episode) => {
     //create card div
@@ -110,7 +119,9 @@ function makeCards(episodeList, searchTerm) {
     cardElementsDiv.appendChild(headingEl);
     //create subheading (season number and episode code)
     const subHeadingEl = document.createElement("h3");
-    subHeadingEl.innerHTML = `SE-${numberFormatter(episode.season)} EP-${numberFormatter(episode.number)}`;
+    subHeadingEl.innerHTML = `SE-${numberFormatter(
+      episode.season
+    )} EP-${numberFormatter(episode.number)}`;
     subHeadingEl.className = "card-sub-heading";
     cardElementsDiv.appendChild(subHeadingEl);
 
@@ -135,8 +146,3 @@ function makeCards(episodeList, searchTerm) {
     cardContainer.appendChild(cardDiv);
   });
 }
-
-/*NOTE TO SELF: research why we are using this way and not just calling in the js
-|
-V             */
-// window.onload = setup;
