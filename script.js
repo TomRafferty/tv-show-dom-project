@@ -1,6 +1,15 @@
 //globals:
 //TV Show data not live yet
-let allShows = getAllShows();
+let allShows = fetch("https://api.tvmaze.com/shows")
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (data) {
+    allShows = data;
+  })
+  .catch(function (error) {
+    console.log(`ERROR - ${error}`);
+  });
 // const allEpisodes = getAllEpisodes();
 let allEpisodes = fetch("https://api.tvmaze.com/shows/82/episodes")
   .then(function (response) {
@@ -8,20 +17,23 @@ let allEpisodes = fetch("https://api.tvmaze.com/shows/82/episodes")
   })
   .then(function (data) {
     allEpisodes = data;
-    setup();
   })
   .catch(function (error) {
     console.log(`ERROR - ${error}`);
   });
 
 const contentEl = document.getElementById("content");
-const selectEl = document.getElementById("select-episode");
+const selectEpisodeEl = document.getElementById("select-episode");
+const selectShowEl = document.getElementById("show-select");
 
-function setup() {
+async function setup() {
   //all episodes returns an array of
   //objects found in episodes.js
   // eslint-disable-next-line no-undef
+  await allEpisodes;
+  await allShows;
   makeCards(allEpisodes);
+  populateSelectShow(allShows);
   populateSelectEpisodes();
 }
 
@@ -49,6 +61,15 @@ function numberFormatter(number) {
   }
 }
 
+function populateSelectShow(showArray) {
+  for (let i = 0; i < showArray.length; i++) {
+    const newOption = document.createElement("option");
+    newOption.value = showArray[i].id;
+    newOption.textContent = showArray[i].name;
+    selectShowEl.appendChild(newOption);
+  }
+}
+
 function populateSelectEpisodes() {
   //adds all the episodes to the select-episode <select> as options.
   for (let i = 0; i < allEpisodes.length; i++) {
@@ -58,7 +79,7 @@ function populateSelectEpisodes() {
     newEpisode.text = `SE${numberFormatter(
       allEpisodes[i].season
     )}EP${numberFormatter(allEpisodes[i].number)}`;
-    selectEl.appendChild(newEpisode);
+    selectEpisodeEl.appendChild(newEpisode);
   }
 }
 function jumpToEpisode(episode) {
@@ -154,3 +175,4 @@ function makeCards(episodeList, searchTerm) {
 |
 V             */
 // window.onload = setup;
+setup();
