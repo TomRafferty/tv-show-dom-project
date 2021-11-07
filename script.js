@@ -1,5 +1,9 @@
 //globals:
-//TV Show data not live yet
+const contentEl = document.getElementById("content");
+const selectEpisodeEl = document.getElementById("select-episode");
+const selectShowEl = document.getElementById("show-select");
+
+let allEpisodes;
 let allShows = fetch("https://api.tvmaze.com/shows")
   .then(function (response) {
     return response.json();
@@ -11,28 +15,31 @@ let allShows = fetch("https://api.tvmaze.com/shows")
     console.log(`ERROR - ${error}`);
   });
 // const allEpisodes = getAllEpisodes();
-let allEpisodes = fetch("https://api.tvmaze.com/shows/82/episodes")
-  .then(function (response) {
-    return response.json();
-  })
-  .then(function (data) {
-    allEpisodes = data;
-  })
-  .catch(function (error) {
-    console.log(`ERROR - ${error}`);
-  });
-
-const contentEl = document.getElementById("content");
-const selectEpisodeEl = document.getElementById("select-episode");
-const selectShowEl = document.getElementById("show-select");
+function getEpisodesForShow(selectedShowID) {
+  allEpisodes = fetch(`https://api.tvmaze.com/shows/${selectedShowID}/episodes`)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      allEpisodes = data;
+      populateSelectEpisodes();
+    })
+    .catch(function (error) {
+      console.log(`ERROR - ${error}`);
+    });
+}
 
 async function setup() {
+  let currentShowID = selectShowEl.value;
   await allShows;
-  await allEpisodes;
-  populateSelectShow();
-  if (selectShowEl.value !== "none") {
+  //this just ensures that the list doesn't keep adding up
+  if (selectShowEl.childNodes.length <= 3) {
+    populateSelectShow();
+  }
+  if (currentShowID !== "none") {
+    await allEpisodes;
     makeCards();
-    populateSelectEpisodes();
+    getEpisodesForShow();
   }
 }
 
