@@ -10,8 +10,8 @@
 
   <body>
     <div id="search-container">
-      <select name="show-select" id="show-select">
-        <option value="" selected>Select A Show</option>
+      <select name="show-select" id="show-select" onchange="setup()">
+        <option value="none" selected>Select A Show</option>
       </select>
       <input
         type="text"

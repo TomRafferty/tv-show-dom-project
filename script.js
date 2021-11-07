@@ -27,14 +27,13 @@ const selectEpisodeEl = document.getElementById("select-episode");
 const selectShowEl = document.getElementById("show-select");
 
 async function setup() {
-  //all episodes returns an array of
-  //objects found in episodes.js
-  // eslint-disable-next-line no-undef
-  await allEpisodes;
   await allShows;
-  makeCards(allEpisodes);
-  populateSelectShow(allShows);
-  populateSelectEpisodes();
+  await allEpisodes;
+  populateSelectShow();
+  if (selectShowEl.value !== "none") {
+    makeCards();
+    populateSelectEpisodes();
+  }
 }
 
 function removeElementTagsFromString(
@@ -61,11 +60,11 @@ function numberFormatter(number) {
   }
 }
 
-function populateSelectShow(showArray) {
-  for (let i = 0; i < showArray.length; i++) {
+function populateSelectShow() {
+  for (let i = 0; i < allShows.length; i++) {
     const newOption = document.createElement("option");
-    newOption.value = showArray[i].id;
-    newOption.textContent = showArray[i].name;
+    newOption.value = allShows[i].id;
+    newOption.textContent = allShows[i].name;
     selectShowEl.appendChild(newOption);
   }
 }
@@ -96,11 +95,11 @@ const cardContainer = document.createElement("section");
 cardContainer.id = "card-container";
 contentEl.appendChild(cardContainer);
 
-function makeCards(episodeList, searchTerm) {
+function makeCards(searchTerm) {
   cardContainer.innerHTML = "";
 
   //so as to not effect original list
-  let episodeListCopy = episodeList;
+  let episodeListCopy = allEpisodes;
 
   //apply search filter
   const resultCount = document.getElementById("result-count");
@@ -119,7 +118,7 @@ function makeCards(episodeList, searchTerm) {
       }
     });
     //add search count
-    resultCount.innerHTML = `Results: ${episodeListCopy.length}/${episodeList.length}`;
+    resultCount.innerHTML = `Results: ${episodeListCopy.length}/${allEpisodes.length}`;
     if (searchTerm.length === 0) {
       resultCount.innerHTML = "";
     }
