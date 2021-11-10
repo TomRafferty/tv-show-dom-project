@@ -1,35 +1,70 @@
 //globals:
 const contentEl = document.getElementById("content");
-const selectShowEl = document.getElementById("select-show");
 const selectEpisodeEl = document.getElementById("select-episode");
-let currentShow = selectShowEl.value;
-console.log(currentShow);
-//not using live data, just for testing on shows.
-let allShows = getAllShows();
-let allShowsCopy = allShows;
+const selectShowEl = document.getElementById("show-select");
 
-function setup() {
-  //all episodes returns an array of
-  //objects found in episodes.js
-  // eslint-disable-next-line no-undef
-  makeCards(allEpisodes);
-  if (currentShow !== undefined && currentShow !== "" && currentShow !== null) {
-    populateSelectEpisodes(currentShow);
-  }
-  populateShowList(allShows);
+let allEpisodes;
+//no need to wrap this fetch in a function as it is needed right from the
+//get go whereas episodes are fetched once a show has been chosen.
+let allShows = fetch("https://api.tvmaze.com/shows")
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (data) {
+    allShows = data;
+  })
+  .catch(function (error) {
+    console.log(`ERROR - ${error}`);
+  });
+// const allEpisodes = getAllEpisodes();
+function getEpisodesForShow(selectedShowID) {
+  return fetch(`https://api.tvmaze.com/shows/${selectedShowID}/episodes`)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      allEpisodes = data;
+      populateSelectEpisodes();
+    })
+    .catch(function (error) {
+      console.log(`ERROR - ${error}`);
+    });
 }
+
+async function setup() {
+  let currentShowID = selectShowEl.value;
+  //most functionality relies on the show data so we await that
+  await allShows;
+
+  if (selectShowEl.childNodes.length <= 3) {
+    populateSelectShow();
+  }
+  if (currentShowID !== "none") {
+    //this code block will run when a show has been selected
+    await getEpisodesForShow(currentShowID);
+    await allEpisodes;
+    //both below functions rely on episode data so we await it
+    makeCards();
+    getEpisodesForShow(currentShowID);
+  }
+}
+
 function removeElementTagsFromString(
   string,
   openingElementTag,
   closingElementTag
 ) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
-  let newStr = string.replaceAll(openingElementTag, "");
-  return newStr.replaceAll(closingElementTag, "");
+  // let newStr = string.replaceAll(openingElementTag, "");
+  // return newStr.replaceAll(closingElementTag, "");
+  return string
+    .replaceAll(openingElementTag, "")
+    .replaceAll(closingElementTag, "");
 }
 
 function liveSearch(str) {
-  makeCards(allEpisodes, str);
+  //just passes a string from the livesearch input into the makeCards() function
+  makeCards(str);
 }
 
 function numberFormatter(number) {
@@ -42,22 +77,33 @@ function numberFormatter(number) {
   }
 }
 
-function populateShowList(showArray) {
-  const showIds = showArray.map((show) => show.id);
-  for (let i = 0; i < showIds.length; i++) {
+function populateSelectShow() {
+  //this doesn't need to be called as sort apparently
+  //effect the original array.
+  //I have to do a lot of research on sort! - this was mostly
+  //from MDN.
+  const sortedShows = allShows.sort(function (a, b) {
+    const showA = a.name.toUpperCase();
+    const showB = b.name.toUpperCase();
+    if (showA < showB) {
+      return -1;
+    }
+    if (showA > showB) {
+      return 1;
+    }
+    return 0;
+  });
+  //populate select element with shows
+  for (let i = 0; i < allShows.length; i++) {
     const newOption = document.createElement("option");
-    //I use the ID just for selection
-    newOption.value = showIds[i];
-    newOption.textContent = showArray[i].name;
+    //we need the ID as a value to easily identify the selected show.
+    newOption.value = allShows[i].id;
+    newOption.textContent = allShows[i].name;
     selectShowEl.appendChild(newOption);
   }
 }
-function selectShow(showId) {
-  currentShow = allShowsCopy.filter(x => x.id === showId);
-  setup();
-}
 
-function populateSelectEpisodes(showName) {
+function populateSelectEpisodes() {
   //adds all the episodes to the select-episode <select> as options.
   for (let i = 0; i < allEpisodes.length; i++) {
     const newEpisode = document.createElement("option");
@@ -73,112 +119,106 @@ function jumpToEpisode(episode) {
   //this function simply jumps to the selected episode
   //clear the search
   liveSearch("");
+  //clear episode list
+  selectEpisodeEl.innerHTML =
+    "<option value=\"\" selected>Select Episode</option>"; //making sure to add the Select Episode hint
   //jump to current selected option
   const selectedEpisode = document.getElementById(episode);
   selectedEpisode.scrollIntoView();
 }
 
-//from this point down is all to do with episodes and displaying them
-let allEpisodes;
-if (currentShow !== null || currentShow !== undefined || currentShow !== "") {
-  allEpisodes = fetch(
-    //getting type error here... shouldn't be running if currentShow is undefined though
-    `https://api.tvmaze.com/shows/${currentShow["id"]}/${currentShow["name"].replaceAll(" ","-")}`
-  )
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      allEpisodes = data;
-      setup();
-    })
-    .catch(function (error) {
-      console.log(`ERROR - ${error}`);
-    });
-}
-
 //card container section
 const cardContainer = document.createElement("section");
-cardContainer.setAttribute.id = "card-container";
+cardContainer.id = "card-container";
 contentEl.appendChild(cardContainer);
-function makeCards(episodeList, searchTerm) {
+
+function makeCards(searchTerm) {
+  //reset the cards
   cardContainer.innerHTML = "";
 
-  if (currentShow !== null || currentShow !== undefined) {
-    //so as to not effect original list
-    let episodeListCopy = episodeList;
+  //copy the array so as to not effect original list
+  let episodeListCopy = allEpisodes;
 
-    //apply search filter
-    const resultCount = document.getElementById("result-count");
-    if (searchTerm !== undefined) {
-      episodeListCopy = episodeListCopy.filter((episode) => {
-        const episodeSum = removeElementTagsFromString(
-          episode.summary,
-          "<p>",
-          "</p>"
-        );
-        if (
-          episodeSum.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          episode.name.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          return true;
-        }
-      });
-      //add search count
-      resultCount.innerHTML = `Results: ${episodeListCopy.length}/${episodeList.length}`;
-      if (searchTerm.length === 0) {
-        resultCount.innerHTML = "";
-      }
-    }
-
-    //creating all the cards
-    episodeListCopy.forEach((episode) => {
-      //create card div
-      const cardDiv = document.createElement("div");
-      cardDiv.className = "card";
-      cardDiv.id = `${episode.name}`; //this is for the select scroll to
-
-      //create card elements div
-      const cardElementsDiv = document.createElement("div");
-      cardElementsDiv.className = "card-elements";
-
-      //create heading
-      const headingEl = document.createElement("h2");
-      headingEl.innerHTML = `${episode.name}`;
-      headingEl.className = "card-heading";
-      cardElementsDiv.appendChild(headingEl);
-      //create subheading (season number and episode code)
-      const subHeadingEl = document.createElement("h3");
-      subHeadingEl.innerHTML = `SE-${numberFormatter(
-        episode.season
-      )} EP-${numberFormatter(episode.number)}`;
-      subHeadingEl.className = "card-sub-heading";
-      cardElementsDiv.appendChild(subHeadingEl);
-
-      //create image
-      const imageEl = document.createElement("img");
-      imageEl.src = episode.image.medium;
-      imageEl.className = "card-image";
-      cardElementsDiv.appendChild(imageEl);
-
-      //create para
-      const paraEl = document.createElement("p");
-      paraEl.textContent = removeElementTagsFromString(
+  //apply search filter
+  const resultCount = document.getElementById("result-count");
+  if (searchTerm !== undefined) {
+    //this will execute when if the user has typed in the live search
+    episodeListCopy = episodeListCopy.filter((episode) => {
+      const episodeSum = removeElementTagsFromString(
         episode.summary,
         "<p>",
         "</p>"
       );
-      paraEl.className = "card-para";
-      cardElementsDiv.appendChild(paraEl);
-
-      //append card
-      cardDiv.appendChild(cardElementsDiv);
-      cardContainer.appendChild(cardDiv);
+      if (
+        episodeSum.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        episode.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return true;
+      }
     });
+    //add search count
+    resultCount.innerHTML = `Results: ${episodeListCopy.length}/${allEpisodes.length}`;
+    if (searchTerm.length === 0) {
+      //this simply decides whether to show the result count
+      resultCount.innerHTML = "";
+    }
   }
+
+  //creating all the cards
+  episodeListCopy.forEach((episode) => {
+    //create card div
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    cardDiv.id = `${episode.name}`; //this is for the select scroll to
+
+    //create card elements div
+    const cardElementsDiv = document.createElement("div");
+    cardElementsDiv.className = "card-elements";
+
+    //create heading
+    const headingEl = document.createElement("h2");
+    headingEl.innerHTML = `${episode.name}`;
+    headingEl.className = "card-heading";
+    cardElementsDiv.appendChild(headingEl);
+    //create subheading (season number and episode code)
+    const subHeadingEl = document.createElement("h3");
+    subHeadingEl.innerHTML = `SE-${numberFormatter(
+      episode.season
+    )} EP-${numberFormatter(episode.number)}`;
+    subHeadingEl.className = "card-sub-heading";
+    cardElementsDiv.appendChild(subHeadingEl);
+
+    //create image
+    const imageEl = document.createElement("img");
+    imageEl.src = episode.image.medium;
+    imageEl.className = "card-image";
+    cardElementsDiv.appendChild(imageEl);
+
+    //create para
+    const paraEl = document.createElement("p");
+    paraEl.textContent = removeElementTagsFromString(
+      episode.summary,
+      "<p>",
+      "</p>"
+    );
+    paraEl.className = "card-para";
+    cardElementsDiv.appendChild(paraEl);
+
+    //append card
+    cardDiv.appendChild(cardElementsDiv);
+    cardContainer.appendChild(cardDiv);
+  });
 }
 
 /*NOTE TO SELF: research why we are using this way and not just calling in the js
 |
 V             */
-window.onload = setup();
+// window.onload = setup;
+setup();
+/*
+to do:
+- add some nice css
+- remove 'select show' from show selector when a show is selected
+- anchor the search and filtering functions to the top of the screen.
+
+*/

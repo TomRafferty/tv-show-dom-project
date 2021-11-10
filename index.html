@@ -10,12 +10,8 @@
 
   <body>
     <div id="search-container">
-      <select
-        name="select-show"
-        id="select-show"
-        onchange="selectShow(this.value)"
-      >
-        <option value="" selected>Select Show</option>
+      <select name="show-select" id="show-select" onchange="setup()">
+        <option value="none" selected>Select A Show</option>
       </select>
       <input
         type="text"
@@ -31,16 +27,16 @@
       </select>
       <p id="result-count"></p>
     </div>
+
     <div id="content">
       <!-- in here will go the card container -->
     </div>
 
-    <!-- this one must always be loaded first! -->
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
+    <!-- <script src="episodes.js"></script> -->
     <script src="shows.js"></script>
 
-    <!-- Loads YOUR javascript code -->
+    <!-- loaded in order of dependency -->
     <script src="script.js"></script>
   </body>
+  <footer>All data sourced from - https://api.tvmaze.com</footer>
 </html>
