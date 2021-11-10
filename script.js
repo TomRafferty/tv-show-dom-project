@@ -4,6 +4,8 @@ const selectEpisodeEl = document.getElementById("select-episode");
 const selectShowEl = document.getElementById("show-select");
 
 let allEpisodes;
+//no need to wrap this fetch in a function as it is needed right from the
+//get go whereas episodes are fetched once a show has been chosen.
 let allShows = fetch("https://api.tvmaze.com/shows")
   .then(function (response) {
     return response.json();
@@ -31,22 +33,20 @@ function getEpisodesForShow(selectedShowID) {
 
 async function setup() {
   let currentShowID = selectShowEl.value;
+  //most functionality relies on the show data so we await that
   await allShows;
 
   if (selectShowEl.childNodes.length <= 3) {
     populateSelectShow();
   }
   if (currentShowID !== "none") {
+    //this code block will run when a show has been selected
     await getEpisodesForShow(currentShowID);
     await allEpisodes;
+    //both below functions rely on episode data so we await it
     makeCards();
     getEpisodesForShow(currentShowID);
   }
-}
-
-function sortArrayAlpha(arr) {
-  //this function sort any given array of strings alphabetically.
-  console.log(arr.sort());
 }
 
 function removeElementTagsFromString(
@@ -55,11 +55,15 @@ function removeElementTagsFromString(
   closingElementTag
 ) {
   //removes unwanted element tags from a string e.g "<p>Hello World</p>" = "Hello World"
-  let newStr = string.replaceAll(openingElementTag, "");
-  return newStr.replaceAll(closingElementTag, "");
+  // let newStr = string.replaceAll(openingElementTag, "");
+  // return newStr.replaceAll(closingElementTag, "");
+  return string
+    .replaceAll(openingElementTag, "")
+    .replaceAll(closingElementTag, "");
 }
 
 function liveSearch(str) {
+  //just passes a string from the livesearch input into the makeCards() function
   makeCards(str);
 }
 
@@ -89,8 +93,10 @@ function populateSelectShow() {
     }
     return 0;
   });
+  //populate select element with shows
   for (let i = 0; i < allShows.length; i++) {
     const newOption = document.createElement("option");
+    //we need the ID as a value to easily identify the selected show.
     newOption.value = allShows[i].id;
     newOption.textContent = allShows[i].name;
     selectShowEl.appendChild(newOption);
@@ -113,6 +119,9 @@ function jumpToEpisode(episode) {
   //this function simply jumps to the selected episode
   //clear the search
   liveSearch("");
+  //clear episode list
+  selectEpisodeEl.innerHTML =
+    "<option value=\"\" selected>Select Episode</option>"; //making sure to add the Select Episode hint
   //jump to current selected option
   const selectedEpisode = document.getElementById(episode);
   selectedEpisode.scrollIntoView();
@@ -124,14 +133,16 @@ cardContainer.id = "card-container";
 contentEl.appendChild(cardContainer);
 
 function makeCards(searchTerm) {
+  //reset the cards
   cardContainer.innerHTML = "";
 
-  //so as to not effect original list
+  //copy the array so as to not effect original list
   let episodeListCopy = allEpisodes;
 
   //apply search filter
   const resultCount = document.getElementById("result-count");
   if (searchTerm !== undefined) {
+    //this will execute when if the user has typed in the live search
     episodeListCopy = episodeListCopy.filter((episode) => {
       const episodeSum = removeElementTagsFromString(
         episode.summary,
@@ -148,6 +159,7 @@ function makeCards(searchTerm) {
     //add search count
     resultCount.innerHTML = `Results: ${episodeListCopy.length}/${allEpisodes.length}`;
     if (searchTerm.length === 0) {
+      //this simply decides whether to show the result count
       resultCount.innerHTML = "";
     }
   }
@@ -203,3 +215,10 @@ function makeCards(searchTerm) {
 V             */
 // window.onload = setup;
 setup();
+/*
+to do:
+- add some nice css
+- remove 'select show' from show selector when a show is selected
+- anchor the search and filtering functions to the top of the screen.
+
+*/
