@@ -16,7 +16,7 @@ let allShows = fetch("https://api.tvmaze.com/shows")
   });
 // const allEpisodes = getAllEpisodes();
 function getEpisodesForShow(selectedShowID) {
-  allEpisodes = fetch(`https://api.tvmaze.com/shows/${selectedShowID}/episodes`)
+  return fetch(`https://api.tvmaze.com/shows/${selectedShowID}/episodes`)
     .then(function (response) {
       return response.json();
     })
@@ -32,14 +32,15 @@ function getEpisodesForShow(selectedShowID) {
 async function setup() {
   let currentShowID = selectShowEl.value;
   await allShows;
-  //this just ensures that the list doesn't keep adding up
+
   if (selectShowEl.childNodes.length <= 3) {
     populateSelectShow();
   }
   if (currentShowID !== "none") {
+    getEpisodesForShow(currentShowID);
     await allEpisodes;
     makeCards();
-    getEpisodesForShow();
+    getEpisodesForShow(currentShowID);
   }
 }
 
