@@ -37,11 +37,16 @@ async function setup() {
     populateSelectShow();
   }
   if (currentShowID !== "none") {
-    getEpisodesForShow(currentShowID);
+    await getEpisodesForShow(currentShowID);
     await allEpisodes;
     makeCards();
     getEpisodesForShow(currentShowID);
   }
+}
+
+function sortArrayAlpha(arr) {
+  //this function sort any given array of strings alphabetically.
+  console.log(arr.sort());
 }
 
 function removeElementTagsFromString(
@@ -55,7 +60,7 @@ function removeElementTagsFromString(
 }
 
 function liveSearch(str) {
-  makeCards(allEpisodes, str);
+  makeCards(str);
 }
 
 function numberFormatter(number) {
@@ -69,6 +74,21 @@ function numberFormatter(number) {
 }
 
 function populateSelectShow() {
+  //this doesn't need to be called as sort apparently
+  //effect the original array.
+  //I have to do a lot of research on sort! - this was mostly
+  //from MDN.
+  const sortedShows = allShows.sort(function (a, b) {
+    const showA = a.name.toUpperCase();
+    const showB = b.name.toUpperCase();
+    if (showA < showB) {
+      return -1;
+    }
+    if (showA > showB) {
+      return 1;
+    }
+    return 0;
+  });
   for (let i = 0; i < allShows.length; i++) {
     const newOption = document.createElement("option");
     newOption.value = allShows[i].id;
