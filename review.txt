@@ -1,0 +1,47 @@
+Code Review:
+Total Score: 83%
+Summary:
+Good code demonstrating solid grasp of accessing and manipulating API data. 
+Well commented and satisfies all objectives up to level 500.
+Try expanding on this project with the level 500 and experimenting with some level 999 challenges. 
+Try replacing functions with arrow functions and for loops with foreach array methods.
+Try improving aesthetic with CSS grids, fonts, and colours. 
+More ideas listed on level 999 such as error handling, infinite scrolling, local storage would be great additions to this project too.
+
+Review:
+Minimal Features (level 100):
+1. Displays all epsiodes
+2. Shows episode name, Shows season number, Shows episode number, Shows medium sized image, Shows summary text, Shows episode code padded into two digits
+3. Displays source of Data
+Score: 100%
+
+Add Search (level 200):
+1. Live search works, case insensitive, matches current search, displays result count, all episodes shown when search field is empty
+Score: 100%
+
+Episode selector (level 300)
+1. User selection navigates to episode
+2. (Bonus) only show selected episode with option to navigate back to original results (not completed)
+Score: 100% 
+
+Episode selector (level 350)
+1. Used fetch to use api data
+2. Search works the same as in level 300
+3. Setup of program loads API data, and does not require reloading of API data on every query
+Score: 100%
+
+Add a Show Selector (level 400)
+1. Show selector used and works with search selector
+Score: 100%
+
+Add a shows list and search (level 500)
+1. No show listing with genres, rating, runtime, summary, image.
+2. No show listing for episode search and seleection with hiding listing button.
+3. No navigation link
+4. No free-text show search through show names, genres, and summary texts.
+5. N/A but upon development of these features make sure episode selector works when swapping from listing and back.
+Score: 0%
+
+Ideas for further work(Level 999)
+Experiment with proposals suggested: (https://syllabus.codeyourfuture.io/js-core-3/tv-show-dom-project/level-999#ideas-for-further-work)
+
